@@ -17,11 +17,13 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+   
+    protected $fillable = ['email', 'password', 'type'];
+
+    public function personnes()
+    {
+        return $this->hasOne(Personne::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
