@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+.invoice {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.from-to {
+    display: flex;
+}
+
+.from, .to {
+    flex: 1;
+}
+
+.from {
+    padding-right: 10px;
+}
+
+.items {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.items th, .items td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+.items th {
+    background-color: #f0f0f0;
+}
+
+.subtotal, .tax, .total {
+    text-align: right;
+    font-weight: bold;
+}
+
+.total {
+    background-color: #f0f0f0;
+}
