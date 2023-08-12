@@ -186,7 +186,7 @@ class ProduitController extends Controller {
      public function show_produits(){
         $user=Auth::user();
         $accesslevel=$user->type;
-        if($accesslevel==="normal")
+        if($accesslevel==="normal" || $accesslevel==="admin" )
         {
         $produits = Produit::all();
         $sortie = ProduitVent::All();
@@ -206,7 +206,7 @@ class ProduitController extends Controller {
      {
         $user=Auth::user();
         $accesslevel=$user->type;
-        if($accesslevel==="normal")
+        if($accesslevel==="normal" || $accesslevel==="admin" )
         {
          $specificDate = $request->input('date');
          $entre = Entre::getProductsForDate($specificDate); // Utiliser la bonne méthode
@@ -221,7 +221,7 @@ class ProduitController extends Controller {
      {
         $user=Auth::user();
         $accesslevel=$user->type;
-        if($accesslevel==="normal")
+        if($accesslevel==="normal" ||$accesslevel==="admin" )
         {
          $specificDate = $request->input('date');
          $sortie = ProduitVent::getProductsForDate($specificDate); // Utiliser la bonne méthode
