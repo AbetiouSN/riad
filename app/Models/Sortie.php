@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Sortie extends Model
 {
     use HasFactory;
-    protected $fillable = ['quantité', 'id_produit', 'id_client'];
+    protected $fillable = ['quantité', 'id_produit', 'id_client','date'];
 
     public function produit()
     {
@@ -19,4 +19,5 @@ class Sortie extends Model
     {
         return $this->belongsTo(Client::class, 'id_client');
     }
+
 }

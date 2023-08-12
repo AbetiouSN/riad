@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('produits', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
-    $table->integer('quantité');
-    $table->string('catégorie');
-    $table->unsignedBigInteger('id_stock');
-    $table->foreign('id_stock')->references('id')->on('stocks');
+            $table->integer('quantité');
+            $table->string('catégorie');
+    // $table->unsignedBigInteger('id_stock');
+    // $table->foreign('id_stock')->references('id')->on('stocks');
             $table->timestamps();
         });
     }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('quantité');
     $table->decimal('prix_produit');
     $table->decimal('prix_total');
-    $table->decimal('somme_jour');
+    //$table->decimal('somme_jour');
     $table->string('type_vent');
     $table->unsignedBigInteger('id_produit');
     $table->foreign('id_produit')->references('id')->on('produits');
