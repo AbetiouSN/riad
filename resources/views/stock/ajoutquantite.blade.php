@@ -68,9 +68,7 @@
             Ajouter un Quantité
         </h1>
 
-        <form action="{{ route('update_produite', ['id' => $id]) }}" method="post" class="mt-4">
-            @csrf
-            @method('PUT')
+        
 
             <div class="form-group">
                 <label for="name">Nom de produit</label>
@@ -86,12 +84,17 @@
             </div>
            <div class="form-group">
                 <label for="prix">Prix (prix d'un élément)</label>
-                <input type="number" name="prix" id="prix" placeholder="{{$prix}}" class="form-control">
+                <input type="number" disabled name="prix" id="prix" value="{{$prix}}" class="form-control">
             </div>
+            
+            <form action="{{ route('update_produite', ['id' => $id]) }}" method="post" class="mt-4">
+                @csrf
+                @method('PUT')
             <div class="form-group">
                 <label for="date">Date (YYYY-MM-DD)</label>
                 <input type="date" name="date" id="date" value="{{ date('Y-m-d') }}" class="form-control">
             </div>
+            
 
             <div class="form-group">
                 <label for="quantité">Ajouter Quantité</label>

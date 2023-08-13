@@ -37,9 +37,14 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" class="text-center">Aucune donnée disponible</td>
+                        <td colspan="6" class="text-center">Aucune donnée disponible</td>
                     </tr>
                 @endforelse
+                <tr style="border: 2px solid black">
+                    <td class="bg-dark text-white" colspan="2">TOTAL </td>
+                    <td colspan="2"> Total du Prix pour Sortie : <b>{{$totalPrixQuantiteSortie}}</b></td>
+                    <td colspan="2"> Total du Quantité pour Sortie : <b>{{$totalQuantiteSortie}}</b></td>
+                </tr>
             </tbody>
         </table>
     </div>

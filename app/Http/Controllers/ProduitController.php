@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Entre;
 use App\Models\Produit;
+use App\Models\Produit_histoire;
 use App\Models\ProduitVent;
 use App\Models\Sortie;
 use Dotenv\Validator;
@@ -48,6 +49,14 @@ class ProduitController extends Controller {
             'prix' => $request->input('prix'),
             
         ]);
+        $produit_h = Produit_histoire::create([
+            'quantité' =>$request->input('quantité'),
+            'nom' => $request->input('nom'),
+            'catégorie' => $request->input('catégorie'),
+            'prix' => $request->input('prix'),
+            'date' => $produit->created_at,
+            
+        ]);
     //   dd($produit);
        //return $this->success([$produit],'the request was successful',200);
     
@@ -82,11 +91,11 @@ class ProduitController extends Controller {
     
     }
 
-    public function Add_quantite(Request $request,string $id ){
+    public function Add_quantite(Request $request , string $id ){
 
         $user=Auth::user();
         $accesslevel=$user->type;
-        if($accesslevel==="admin")
+        if( $accesslevel==="admin")
         {
         $produit = Produit::findOrFail($id);
         $id_produit = $produit->id;
@@ -100,6 +109,7 @@ class ProduitController extends Controller {
       
            
                 $produit->quantité = $request->input('quantité') + $qtu;
+                // $produit->prix = $request->input('prix');
                 //dd($produit->quantité,$qtu); 
                 $produit->update();
 
@@ -110,6 +120,15 @@ class ProduitController extends Controller {
                 ]);
                 //dd($entre);
                 $entre->save();
+                 
+                $produit_h = Produit_histoire::create([
+                    'quantité' =>$qtu +  $request->input('quantité'),
+                    'nom' => $produit->nom,
+                    'catégorie' => $produit->catégorie,
+                    'prix' => $produit->prix,
+                    'date' => $request->input('date'),
+                    'etat' => 'ENTRER' ,                  
+                ]);
                  return redirect()->route('affichage_produits'); 
                 }else{
                     return response()->json(['message ' => 'vous etes pas um admin !!']);
@@ -122,7 +141,7 @@ class ProduitController extends Controller {
         
         $user=Auth::user();
         $accesslevel=$user->type;
-        if($accesslevel==="admin")
+        if( $accesslevel === "admin" )
         {
         $produit = Produit::findOrFail($id);
         $nom = $produit->nom;
@@ -141,7 +160,7 @@ class ProduitController extends Controller {
      public function Sup_quantite(Request $request,string $id ){
         $user=Auth::user();
         $accesslevel=$user->type;
-        if($accesslevel==="admin")
+        if($accesslevel === "admin")
         {
          $produit = Produit::findOrFail($id);
          $id_produit = $produit->id;
@@ -152,7 +171,7 @@ class ProduitController extends Controller {
          'quantité' => 'required',
          'date' =>'required|date'
      ]);     
-                 $produit->quantité = $qtu - $request->input('quantité')  ;
+                 $produit->quantité = $request->input('quantité')  ;
                  //dd($produit->quantité,$qtu); 
                  $produit->save();
                  
@@ -174,6 +193,15 @@ class ProduitController extends Controller {
                  ]);
                  $produitvent->save();
                 // dd( $produit->prix);
+                
+                $produit_h = Produit_histoire::create([
+                    'quantité' =>$qtu - $request->input('quantité'),
+                    'nom' => $produit->nom,
+                    'catégorie' => $produit->catégorie,
+                    'prix' =>$produit->prix,
+                    'date' => $request->input('date'),  
+                    'etat' => 'SORTIE',                   
+                ]);
                  return redirect()->route('affichage_produits');  
                 }else{
                     return response()->json(['message ' => 'vous etes pas um admin !!']);
@@ -183,21 +211,48 @@ class ProduitController extends Controller {
             //  return view('stock.affichage');      
      }
 
-     public function show_produits(){
-        $user=Auth::user();
-        $accesslevel=$user->type;
-        if($accesslevel==="normal" || $accesslevel==="admin" )
-        {
+     public function show_produits()
+{
+    $user = Auth::user();
+    $accesslevel = $user->type;
+    
+    if ($accesslevel === "normal" || $accesslevel === "admin") {
         $produits = Produit::all();
-        $sortie = ProduitVent::All();
+        $sortie = ProduitVent::all();
         $entre = Entre::all();
-        //dd($sortie);
-        return view('stock.affichage',compact('produits','entre','sortie'));
-    }else{
-        return response()->json(['message ' => 'vous etes pas um admin !!']);
-
+        $produits_h = Produit_histoire::all();
+       // dd($sortie);
+       $totalPrixQuantiteEntree = 0;
+        // Calculer la somme des prix * quantité pour l'état "SORTIE"
+        $totalPrixQuantiteSortie = 0;
+        
+        foreach ($entre as $entreeItem) {
+            $totalPrixQuantiteEntree += $entreeItem->produit->prix * $entreeItem->quantité;
+        }
+        
+        foreach ($sortie as $sortieItem) {
+            $totalPrixQuantiteSortie += $sortieItem->prix_produit * $sortieItem->quantité;
+        }
+        
+        $totalQuantiteEntree = 0;
+        $totalQuantiteSortie = 0;
+        
+        foreach ($entre as $entreeItem) {
+            $totalQuantiteEntree += $entreeItem->quantité;
+        }
+        
+        foreach ($sortie as $sortieItem) {
+            $totalQuantiteSortie += $sortieItem->quantité;
+        }
+        
+        return view('stock.affichage', compact('produits', 'entre', 'sortie', 'produits_h','totalPrixQuantiteEntree', 'totalPrixQuantiteSortie', 'totalQuantiteEntree', 'totalQuantiteSortie'));
+    } else {
+        return response()->json(['message' => 'Vous n\'êtes pas un admin !!']);
     }
-     }
+}
+
+     
+
 
 
 
@@ -210,8 +265,20 @@ class ProduitController extends Controller {
         {
          $specificDate = $request->input('date');
          $entre = Entre::getProductsForDate($specificDate); // Utiliser la bonne méthode
-     
-         return view('stock.entre', compact('entre','specificDate'));
+         
+         $totalPrixQuantiteEntree = 0;
+         $totalQuantiteEntree = 0;
+         
+         foreach ($entre as $entreItem) {
+             $totalPrixQuantiteEntree += $entreItem->produit->prix * $entreItem->quantité;
+         }
+         
+         
+         
+         foreach ($entre as $entreItem) {
+             $totalQuantiteEntree += $entreItem->quantité;
+         }
+         return view('stock.entre', compact('entre','specificDate','totalPrixQuantiteEntree','totalQuantiteEntree'));
         }else{
             return response()->json(['message ' => 'vous etes pas um admin !!']);
     
@@ -220,13 +287,67 @@ class ProduitController extends Controller {
      public function showsortieForDate(Request $request)
      {
         $user=Auth::user();
+        $accesslevel=$user->type; 
+        if($accesslevel==="normal" ||$accesslevel==="admin" )
+        {
+         $specificDate = $request->input('date');
+         $sortie = ProduitVent::getProductsForDate($specificDate); 
+         //dd($sortie);
+         $totalPrixQuantiteSortie = 0;
+         $totalQuantiteSortie = 0;
+         
+         foreach ($sortie as $sortieItem) {
+             $totalPrixQuantiteSortie += $sortieItem->prix_total;
+         }
+         
+         
+         
+         foreach ($sortie as $sortieItem) {
+             $totalQuantiteSortie += $sortieItem->quantité;
+         }
+         return view('stock.sorte', compact('sortie','specificDate','totalPrixQuantiteSortie','totalQuantiteSortie'));
+        }else{
+            return response()->json(['message ' => 'vous etes pas um admin !!']);
+    
+        }
+     }
+     public function showHistoriqueForDate(Request $request)
+     {
+        $user=Auth::user();
         $accesslevel=$user->type;
         if($accesslevel==="normal" ||$accesslevel==="admin" )
         {
          $specificDate = $request->input('date');
-         $sortie = ProduitVent::getProductsForDate($specificDate); // Utiliser la bonne méthode
+         $produits_h = Produit_histoire::getProductsForDate($specificDate); // Utiliser la bonne méthode
+
+           
+             // Calculer la somme des prix * quantité pour l'état "ENTRER"
+             $totalPrixQuantiteEntree = 0;
+             // Calculer la somme des prix * quantité pour l'état "SORTIE"
+             $totalPrixQuantiteSortie = 0;
+             
+             foreach ($produits_h as $produit_h) {
+                 if ($produit_h->etat === "ENTRER") {
+                     $totalPrixQuantiteEntree += $produit_h->prix * $produit_h->quantité;
+                 } elseif ($produit_h->etat === "SORTIE") {
+                     $totalPrixQuantiteSortie += $produit_h->prix * $produit_h->quantité;
+                 }
+             }
+
+             // Calculer la somme des quantité pour l'état "ENTRER"
+             $totalQuantiteEntree = 0;
+             // Calculer la somme des quantité pour l'état "SORTIE"
+             $totalQuantiteSortie = 0;
+             
+             foreach ($produits_h as $produit_h) {
+                 if ($produit_h->etat === "ENTRER") {
+                     $totalQuantiteEntree +=  $produit_h->quantité;
+                 } elseif ($produit_h->etat === "SORTIE") {
+                     $totalQuantiteSortie += $produit_h->quantité;
+                 }
+             }
      
-         return view('stock.sorte', compact('sortie','specificDate'));
+         return view('stock.historique', compact('produits_h','specificDate','totalPrixQuantiteEntree','totalPrixQuantiteSortie','totalQuantiteEntree','totalQuantiteSortie'));
         }else{
             return response()->json(['message ' => 'vous etes pas um admin !!']);
     

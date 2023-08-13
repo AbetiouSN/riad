@@ -39,6 +39,7 @@ Route::get('/affichage_produits',[ProduitController::class,'show_produits'])->na
 
 Route::post('/entre', [ProduitController::class, 'showentreForDate'])->name('entre')->middleware('web');
 Route::post('/sorte', [ProduitController::class, 'showsortieForDate'])->name('sorte')->middleware('web');
+Route::post('/historique', [ProduitController::class, 'showHistoriqueForDate'])->name('historique')->middleware('web');
 
 
 

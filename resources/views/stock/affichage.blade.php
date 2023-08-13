@@ -23,6 +23,7 @@
                     <button class="btn btn-primary" onclick="showTable(1)">Afficher Le stock total </button>
                     <button class="btn btn-primary" onclick="showTable(2)">Afficher Les entres </button>
                     <button class="btn btn-primary" onclick="showTable(3)">Afficher les sorties </button>
+                    <button class="btn btn-primary" onclick="showTable(4)">Historisation des Produits </button>
                 </div>
                 <div id="table1">
                     <table class="table table-bordered " style=" width: 80%;">
@@ -62,6 +63,7 @@
                             <tr>
                                 <th>Stock</th>
                                 <th>Quantité</th>
+                                <th>Prix </th>
                                 <th>Date de stock</th>
                             </tr>
                         </thead>
@@ -71,10 +73,16 @@
                                     <tr>
                                         <td>{{$entry->produit->nom}}</td>
                                         <td>{{$entry->quantité}}</td>
+                                        <td>{{$entry->produit->prix}}</td>
                                         <td>{{$entry->date}}</td>
                                     </tr>
                                 @endif
                             @endforeach
+                            <tr style="border: 2px solid black">
+                                <td class="bg-dark text-white" colspan="2">TOTAL </td>
+                                <td > Total du Prix pour Entres : <b>{{$totalPrixQuantiteEntree}}</b></td>
+                                <td > Total du Quantité pour Entres : <b>{{$totalQuantiteEntree}}</b></td>
+                            </tr>
                         </tbody>
                     </table>
                     <form action="/entre" method="POST">
@@ -92,6 +100,7 @@
                 </div>
             
                 <div id="table3" style="display: none;  width: 80%;">
+                    {{-- sorties--}}
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -109,13 +118,18 @@
                                     <tr>
                                         <td>{{$output->produit->nom}}</td>
                                         <td>{{$output->quantité}}</td>
-                                        <td>{{$output->prix}}</td>
+                                        <td>{{$output->prix_produit}}</td>
                                         <td>{{$output->prix_total}}</td>
                                         <td>{{$output->type_vent}}</td>
                                         <td>{{$output->date}}</td>
                                     </tr>
                                 @endif
                             @endforeach
+                                   <tr style="border: 2px solid black">
+                                      <td class="bg-dark text-white" colspan="2">TOTAL </td>
+                                      <td colspan="2" > Total du Prix pour Sortie : <b>{{$totalPrixQuantiteSortie}}</b></td>
+                                      <td colspan="2"> Total du Quantité pour Sortie : <b>{{$totalQuantiteSortie}}</b></td>
+                                  </tr>
                         </tbody>
                     </table>
                     <br>
@@ -133,8 +147,57 @@
                     </form>
                 </div>
         <hr><br>
-            </div>
             
+            <div id="table4" style="display: none;  width: 80%;">
+                <table class="table table-bordered " style=" width: 80%;">
+                        
+                    <tr>
+                        <th>Stock</th>
+                        <th>Quantité</th>
+                        <th>Prix d'un élément</th>
+                        <th>Etat </th>
+                        <th>Date de stock</th>
+                        
+                    </tr>
+                
+                <tbody>
+                    @foreach ($produits_h as $produits_h)
+                        @if($produits_h && $produits_h->quantité != 0)
+                            <tr>
+                                <td>{{$produits_h->nom}}</td>
+                                <td>{{$produits_h->quantité}}</td>
+                                <td>{{$produits_h->prix}}</td>
+                                <td>{{$produits_h->etat}}</td>
+                                <td>{{$produits_h->date}}</td>
+                            </tr>
+                            
+                        @endif
+                    @endforeach
+                    {{-- <tr style="border: 2px solid black">
+                        <td class="bg-dark text-white">TOTAL </td>
+                        <td > Total du Prix pour Entres : <b>{{$totalPrixQuantiteEntree}}</b></td>
+                        <td > Total du Prix pour Sortie : <b>{{$totalPrixQuantiteSortie}}</b></td>
+                        <td > Total du Quantité pour Entres : <b>{{$totalQuantiteEntree}}</b></td>
+                        <td > Total du Quantité pour Sortie : <b>{{$totalQuantiteSortie}}</b></td>
+                    </tr> --}}
+                </tbody>
+            </table>
+                <br>
+                <form action="/historique" method="POST">
+                    @csrf
+                    <h4>Chercher les details Produits</h4>
+
+                <div class="form-group">
+                    <label for="date">Date (YYYY-MM-DD)</label>
+                    <input type="date" name="date" id="date" value="{{ date('Y-m-d') }}" class="form-control">
+                </div><br>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            </div>
+            <hr><hr><br>
+        </div>
         </div>
         <!-- ... Le reste de votre contenu ... -->
     </div>
@@ -147,6 +210,7 @@
             document.getElementById('table1').style.display = 'none';
             document.getElementById('table2').style.display = 'none';
             document.getElementById('table3').style.display = 'none';
+            document.getElementById('table4').style.display = 'none';
             
             if (tableNumber === 1) {
                 document.getElementById('table1').style.display = 'block';
@@ -154,7 +218,9 @@
                 document.getElementById('table2').style.display = 'block';
             } else if (tableNumber === 3) {
                 document.getElementById('table3').style.display = 'block';
-            } else {
+            }else if (tableNumber === 4) {
+                document.getElementById('table4').style.display = 'block';
+            }else {
                 document.getElementById('message').innerText = 'Choix invalide.';
             }
         }

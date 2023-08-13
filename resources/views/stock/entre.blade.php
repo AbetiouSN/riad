@@ -18,7 +18,10 @@
                 <tr>
                     <th scope="col">Stock</th>
                     <th scope="col">Quantité</th>
+                    <th scope="col">Prix</th> 
+                    <th scope="col">Prix x Quantité</th>
                     <th scope="col">Date de stock</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +29,8 @@
                     <tr>
                         <td>{{ $entry->produit->nom }}</td>
                         <td>{{ $entry->quantité }}</td>
+                        <td>{{ $entry->produit->prix }}</td>
+                        <td>{{ $entry->produit->prix }} <span> X </span>{{ $entry->quantité }}</td>
                         <td>{{ $entry->date }}</td>
                     </tr>
                 @empty
@@ -33,6 +38,11 @@
                         <td colspan="3" class="text-center">Aucune donnée disponible</td>
                     </tr>
                 @endforelse
+                <tr style="border: 2px solid black">
+                    <td class="bg-dark text-white" colspan="3">TOTAL </td>
+                    <td > Total du Prix pour Entres : <b>{{$totalPrixQuantiteEntree}}</b></td>
+                    <td > Total du Quantité pour Entres : <b>{{$totalQuantiteEntree}}</b></td>
+                </tr>
             </tbody>
         </table>
     </div>
