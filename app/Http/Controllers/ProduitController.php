@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agence;
+use App\Models\Client;
 use App\Models\Entre;
+use App\Models\Spa;
 use App\Models\Produit;
 use App\Models\Produit_histoire;
 use App\Models\ProduitVent;
@@ -10,9 +13,116 @@ use App\Models\Sortie;
 use Dotenv\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class ProduitController extends Controller {
 
+
+    public function chercher_client(){
+        $user=Auth::user();
+        $accesslevel=$user->type;
+        if( $accesslevel === "admin" )
+        {
+            return view('clients.chercherclient');
+        }
+        else{
+            return response()->json(['message ' => 'vous etes pas um admin !!']);
+    
+        }
+    }
+    
+    public function find_client(Request $request){
+        $user=Auth::user();
+        $accesslevel=$user->type;
+        if( $accesslevel === "admin" )
+        {
+        $nom = $request->input('prenom');
+        $id_client = null;
+        $nom_réceptionniste = null;
+        $clients = Client::all();
+        $agence = Agence::all();
+        foreach($clients as $client){
+            if($client->prenom === $nom){
+                $id_client = $client->id;
+                break;
+            }
+        }
+
+        //
+        
+
+
+        if($id_client){
+            foreach($agence as $singleAgence){
+                if($singleAgence->id_client === $id_client){
+                    $nom_réceptionniste = $singleAgence->nom_réceptionniste;
+                    break;
+                }
+            }
+            
+            return view('riad.ajouterSpa',compact('id_client','nom_réceptionniste')); }
+        else{return view('clients.chercherclient',['error'=>'Le client '.$nom." does not exist"]);}
+        }
+        else{
+            return response()->json(['message ' => 'vous etes pas um admin !!']);
+    
+        }
+    }
+
+
+
+    public function storeSpa(Request $request,$id_client){
+        $user=Auth::user();
+        $accesslevel=$user->type;
+        if($accesslevel==="admin")
+        {
+        $request->validate([
+            'id_réservation' => 'required',
+            'nom_réceptionniste' => 'required',
+            'nom_soin' => 'required',
+            // 'id_client' => 'required',
+            'date' => 'required',
+            'prix' => 'required',
+        ]);
+        $dateFormatted = Carbon::createFromFormat('Y-m-d', $request->input('date'))->toDateString();
+       $spa = Spa::create([
+            'id_réservation' =>$request->input('id_réservation'),
+            'catégorie' => $request->input('catégorie'),
+            'dépense' => $request->input('dépense'),
+            'nom_réceptionniste' => $request->input('nom_réceptionniste'),
+            'somme' => $request->input('somme'),
+            'nom_soin' => $request->input('nom_soin'),
+            'prix' => $request->input('prix'),
+            'id_client' => $id_client,
+            'type_payment' => $request->input('type_payment'),
+            'date' => $dateFormatted,
+            'name_riad' => $request->input('name_riad'),
+        ]);
+        return redirect()->route('afficherSpa');
+
+    }else{
+        return response()->json(['message ' => 'vous etes pas um admin !!']);
+
+
+    }}
+    
+    public function ShowSpa(){
+        $user=Auth::user();
+        $accesslevel=$user->type;
+        if( $accesslevel === "admin" )
+        {
+        $spas = Spa::all();
+         return view('riad.afficherSpa',compact('spas'));
+        }
+        else{
+            return response()->json(['message ' => 'vous etes pas um admin !!']);
+    
+        }
+    }
+
+    public function dashboard(){
+          return view('dashboard');
+        }
     public function __construct() {
         $this->middleware('auth');
     }

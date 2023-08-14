@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('prenom');
-    $table->string('payment');
-    $table->string('type_payment');
-    $table->unsignedBigInteger('id_réservation')->nullable();
-    $table->unsignedBigInteger('id_produit')->nullable();
-    $table->foreign('id_produit')->references('id')->on('produit_vents');
+            $table->string('payment');
+            $table->string('type_payment');
+            $table->unsignedBigInteger('id_réservation')->nullable();
+            $table->unsignedBigInteger('id_produit')->nullable();
+            $table->foreign('id_produit')->references('id')->on('produit_vents');
             $table->timestamps();
         });
     }

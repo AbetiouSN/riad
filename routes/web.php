@@ -42,8 +42,10 @@ Route::post('/sorte', [ProduitController::class, 'showsortieForDate'])->name('so
 Route::post('/historique', [ProduitController::class, 'showHistoriqueForDate'])->name('historique')->middleware('web');
 
 
-
-
+Route::get('/chercher_client',[ProduitController::class,'chercher_client'])->name('chercher_client')->middleware('web');
+Route::post('/find_client',[ProduitController::class,'find_client'])->name('find_client')->middleware('web');
+Route::post('/storeSpa/{id_client}',[ProduitController::class,'storeSpa'])->name('storeSpa')->middleware('web');
+Route::get('/afficherSpa',[ProduitController::class,'ShowSpa'])->name('afficherSpa')->middleware('web');
 
 Auth::routes();
 

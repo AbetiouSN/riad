@@ -12,6 +12,6 @@ class Agence extends Model
 
     public function client()
     {
-        return $this->belongsTo(Client::class, 'id_client');
+        return $this->hasMany(Client::class);
     }
 }

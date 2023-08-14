@@ -14,7 +14,11 @@ class ProduitVent extends Model
     {
         return $this->belongsTo(Produit::class, 'id_produit');
     }
-
+    
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
     public static function getProductsForDate($specificDate)
     {
         return self::whereDate('date', $specificDate)->get();

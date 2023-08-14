@@ -23,4 +23,9 @@ class Produit extends Model
     {
         return $this->hasMany(Sortie::class);
     }
+
+    public function clients()
+    {
+        return $this->belongsTo(Client::class, 'id_produit');
+    }
 }

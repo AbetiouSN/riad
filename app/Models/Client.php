@@ -11,13 +11,14 @@ class Client extends Model
     
     protected $fillable = ['prenom', 'payment', 'type_payment', 'id_réservation', 'id_produit'];
 
-    public function réservation()
+    public function agence()
     {
-        return $this->belongsTo(Réservation::class, 'id_réservation');
+        return $this->belongsTo(Agence::class);
     }
 
     public function produitVents()
     {
         return $this->hasMany(ProduitVent::class);
     }
+    
 }
