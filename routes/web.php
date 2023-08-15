@@ -47,6 +47,9 @@ Route::post('/find_client',[ProduitController::class,'find_client'])->name('find
 Route::post('/storeSpa/{id_client}',[ProduitController::class,'storeSpa'])->name('storeSpa')->middleware('web');
 Route::get('/afficherSpa',[ProduitController::class,'ShowSpa'])->name('afficherSpa')->middleware('web');
 
+Route::post('/search_produit',[ProduitController::class,'search_produit'])->name('search_produit');
+
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

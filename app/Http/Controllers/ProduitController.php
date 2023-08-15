@@ -14,6 +14,7 @@ use Dotenv\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Laravel\Ui\Presets\Vue;
 
 class ProduitController extends Controller {
 
@@ -361,7 +362,21 @@ class ProduitController extends Controller {
     }
 }
 
-     
+     public function search_produit(request $request){
+        $produits = Produit::all();
+        $nom = $request->input('nom_produit');
+        $prods = null;
+        foreach($produits  as $produit ){
+            if($produit->nom === $nom){
+                $prods = $produit;
+                break;
+            }
+        }
+       // dd($prod);
+        if($prods){
+            return view('stock.showProduit',compact('prods'));
+        }else{ echo "Ce produit n'exist pas !!";}
+     }
 
 
 

@@ -26,6 +26,27 @@
                     <button class="btn btn-primary" onclick="showTable(4)">Historisation des Produits </button>
                 </div>
                 <div id="table1">
+
+
+
+                    {{-- chercher un produit  --}}
+
+                    <div class="container mt-5 row">
+                        <h4 class="col-md-3"> Chercher Un Produit </h4>
+                        <form class="col-md-9 row" action="/search_produit" method="post">
+                            @csrf
+                            <div class="mb-3 col-md-9">
+                                <input type="text" class="form-control" id="nom_produit" name="nom_produit" placeholder="Entrer le nom d'un produit">
+                            </div>
+                            <div class="col-md-3">
+                            <button  type="submit" class="btn btn-warning">Search </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {{-- fin chercher --}}
+
+
                     <table class="table table-bordered " style=" width: 80%;">
                         
                             <tr>
